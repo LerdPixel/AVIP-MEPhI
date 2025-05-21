@@ -17,6 +17,11 @@
 <img src= "./pictures_results/02.bmp" alt="your-image-description" style="border: 2px solid teal;">
 <img src= "./pictures_results/03.bmp" alt="your-image-description" style="border: 2px solid teal;">
 <img src= "./pictures_results/04.bmp" alt="your-image-description" style="border: 2px solid teal;">
+<img src= "./pictures_results/05.bmp" alt="your-image-description" style="border: 2px solid teal;">
+<img src= "./pictures_results/06.bmp" alt="your-image-description" style="border: 2px solid teal;">
+<img src= "./pictures_results/07.bmp" alt="your-image-description" style="border: 2px solid teal;">
+<img src= "./pictures_results/08.bmp" alt="your-image-description" style="border: 2px solid teal;">
+<img src= "./pictures_results/09.bmp" alt="your-image-description" style="border: 2px solid teal;">
 
 ### Профили:
 
