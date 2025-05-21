@@ -4,10 +4,12 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 
 
-SRC_PATH = "mphrase.bmp"
-dist_dir   = "pictures_results"
-prof_dir   = "profiles"
-os.makedirs(dist_dir, exist_ok=True)
+SRC_PATH = "alphabet_phrase.png"
+DST_DIR   = "alphabet"
+
+alphabet = 'גדהוזחטיכךלמםנןסעפףצץקרשתﭏ'
+
+os.makedirs(DST_DIR, exist_ok=True)
 
 def binarize_image(grayscale_image, threshold=128):
     binary_image = grayscale_image < threshold
@@ -18,7 +20,7 @@ def to_binary(path: str) -> np.ndarray:
     arr = np.array(img)
     arr = binarize_image(arr, 130)
     char_img = Image.fromarray((1 - arr) * 255)
-    char_img.save(os.path.join(dist_dir, "binarizated.bmp"))
+    char_img.save(os.path.join(DST_DIR, "binarizated.bmp"))
     return arr
 
 def profiles(bin_img: np.ndarray):
@@ -81,32 +83,31 @@ def split_wide_boxes(boxes: list[tuple], bin_img: np.ndarray, factor: float = 1.
 
 
 def save_letter_profiles(bin_img: np.ndarray, boxes: list[tuple]):
+    counter = 25
     for idx, (x0,y0,x1,y1) in enumerate(boxes):
 
         patch = bin_img[y0:y1+1, x0:x1+1]
 
         char_img = Image.fromarray((1 - patch) * 255)
-        bmp_name = f"{idx:02d}.bmp"
-        char_img.save(os.path.join(dist_dir, bmp_name))
+        bmp_name = f"{alphabet[counter]}.bmp"
+        counter -= 1
+        char_img.save(os.path.join(DST_DIR, bmp_name))
 
-        h_prof, v_prof = profiles(patch)
-        txt_name = f"{idx:02d}.txt"
-        with open(os.path.join(prof_dir, txt_name), "w", encoding="utf-8") as f:
-            f.write("horizontal:\n" + " ".join(map(str, h_prof.tolist())) + "\n")
-            f.write("vertical:\n"   + " ".join(map(str, v_prof.tolist())))
+        # h_prof, v_prof = profiles(patch)
+        # txt_name = f"{idx:02d}.txt"
+        # with open(os.path.join(DST_DIR, txt_name), "w", encoding="utf-8") as f:
+        #     f.write("horizontal:\n" + " ".join(map(str, h_prof.tolist())) + "\n")
+        #     f.write("vertical:\n"   + " ".join(map(str, v_prof.tolist())))
 
 def draw_boxes(path: str, boxes: list[tuple]):
     img = Image.open(path).convert("RGB")
     draw = ImageDraw.Draw(img)
     for x0,y0,x1,y1 in boxes:
-        draw.rectangle([ (x0,y0), (x1,y1) ], outline="teal", width=1)
-    img.save(os.path.join(dist_dir, "phrase_boxes_fixed.bmp"))
+        draw.rectangle([ (x0,y0), (x1,y1) ], outline="red", width=2)
+    img.save(os.path.join(DST_DIR, "phrase_boxes_fixed.bmp"))
 
 bin_img = to_binary(SRC_PATH)
 
-h, v = profiles(bin_img)
-np.savetxt(os.path.join(dist_dir, "horiz_profile.txt"), h, fmt="%d")
-np.savetxt(os.path.join(dist_dir, "vert_profile.txt"), v, fmt="%d")
 
 boxes = segment_by_profiles(bin_img, empty_thresh=2)
 boxes = split_wide_boxes(boxes, bin_img, factor=2)
@@ -115,4 +116,4 @@ draw_boxes(SRC_PATH, boxes)
 save_letter_profiles(bin_img, boxes)
 
 print(f"Сегментировано символов: {len(boxes)}")
-print(f"Результаты в {dist_dir}")
+print(f"Результаты в {DST_DIR}")
